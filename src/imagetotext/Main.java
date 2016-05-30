@@ -8,6 +8,7 @@ package imagetotext;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Image;
+import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
@@ -23,7 +24,7 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 
 /**
  *
- * @author 
+ * @author
  */
 public class Main extends javax.swing.JFrame {
 
@@ -88,7 +89,7 @@ public class Main extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        jButton1.setText("Open");
+        jButton1.setText("Open Image");
         jButton1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton1ActionPerformed(evt);
@@ -106,17 +107,17 @@ public class Main extends javax.swing.JFrame {
         jTextArea1.setRows(5);
         jScrollPane1.setViewportView(jTextArea1);
 
-        jPanel1.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        jPanel1.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1));
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 261, Short.MAX_VALUE)
+            .addGap(0, 254, Short.MAX_VALUE)
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 271, Short.MAX_VALUE)
+            .addGap(0, 0, Short.MAX_VALUE)
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -127,8 +128,8 @@ public class Main extends javax.swing.JFrame {
                 .addGap(45, 45, 45)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addGap(18, 18, 18)
+                        .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 36, Short.MAX_VALUE)
                         .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 242, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(27, 27, 27))
                     .addGroup(layout.createSequentialGroup()
@@ -145,10 +146,10 @@ public class Main extends javax.swing.JFrame {
                     .addComponent(jButton1)
                     .addComponent(jButton2))
                 .addGap(35, 35, 35)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 279, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(67, Short.MAX_VALUE))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 300, Short.MAX_VALUE)
+                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(55, Short.MAX_VALUE))
         );
 
         pack();
@@ -156,12 +157,10 @@ public class Main extends javax.swing.JFrame {
 
     private void init() {
         fc = new javax.swing.JFileChooser();
-        FileNameExtensionFilter filter = new FileNameExtensionFilter("JPG Images", "jpg");
+        FileNameExtensionFilter filter = new FileNameExtensionFilter("Tiff Images", "tif", "tiff");
         fc.setFileFilter(filter);
-
         jl = new JLabel();
         jl.setBounds(10, 10, 670, 250);
-        //add(button);
         add(jl);
         setLayout(null);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -170,50 +169,47 @@ public class Main extends javax.swing.JFrame {
         setVisible(true);
     }
 
-    public ImageIcon ResizeImage(String ImagePath) {
-        ImageIcon MyImage = new ImageIcon(ImagePath);
-        Image img = MyImage.getImage();
-        Image newImg = img.getScaledInstance(jPanel1.getWidth(), jPanel1.getHeight(), Image.SCALE_SMOOTH);
-        ImageIcon image = new ImageIcon(newImg);
+    public ImageIcon ResizeImage(File ImagePath) throws IOException {
+        BufferedImage MyImage = ImageIO.read(ImagePath);
+
+        System.out.println("height: " + jPanel1.getHeight());
+        System.out.println("width: " + jPanel1.getWidth());
+
+        ImageIcon image = new ImageIcon(MyImage.getScaledInstance(jPanel1.getWidth(), jPanel1.getHeight() - 50, Image.SCALE_SMOOTH));
+
+        System.out.println("height: " + image.getIconHeight());
+        System.out.println("width:" + image.getIconWidth());
         return image;
     }
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        // TODO add your handling code here:
-        // if (evt.getSource() == openButton) {
-        int returnVal = fc.showOpenDialog(Main.this);
 
+        int returnVal = fc.showOpenDialog(Main.this);
         if (returnVal == JFileChooser.APPROVE_OPTION) {
             selectedFile = fc.getSelectedFile();
-            //This is where a real application would open the file.
-            Image img = null;
+            BufferedImage img;
             try {
                 img = ImageIO.read(selectedFile);
+                if (img == null) {
+                    System.out.println("it is null");
+                }
+                System.out.println("height: " + img.getHeight());
                 ImageIcon i = new ImageIcon(img);
-                //  jPanel1.add(new JLabel(i));
-                jl.setIcon(ResizeImage(selectedFile.getAbsolutePath()));
+                jl.setIcon(ResizeImage(selectedFile));
                 jPanel1.add(jl);
                 add(jPanel1, BorderLayout.CENTER);
                 jPanel1.setPreferredSize(new Dimension(500, 500));
-//                jFrame1.revalidate();
-//                jFrame2.revalidate();
-//                jFrame3.revalidate();
-//                jPanel1.revalidate();
             } catch (IOException e) {
-
+                System.out.println("Exception: " + e.getMessage());
             }
         } else {
             jTextArea1.append("Open command cancelled by user." + "\n");
         }
-        //  log.setCaretPosition(log.getDocument().getLength());
-
-        //Handle save button action.
-
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         // TODO add your handling code here:
-        String[] command = {"./myscript", selectedFile.getAbsolutePath(), "ls -t | tail -n 1"};
+        String[] command = {"./myscript", selectedFile.getAbsolutePath()};
         Process process;
         try {
             process = Runtime.getRuntime().exec(command);
@@ -221,13 +217,11 @@ public class Main extends javax.swing.JFrame {
                     process.getInputStream()));
             String s;
             while ((s = reader.readLine()) != null) {
-                System.out.println("Script output: " + s);
                 jTextArea1.append(s);
             }
         } catch (IOException ex) {
             Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
         }
-
     }//GEN-LAST:event_jButton2ActionPerformed
 
     /**
@@ -256,7 +250,6 @@ public class Main extends javax.swing.JFrame {
             java.util.logging.Logger.getLogger(Main.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
-
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
