@@ -171,14 +171,7 @@ public class Main extends javax.swing.JFrame {
 
     public ImageIcon ResizeImage(File ImagePath) throws IOException {
         BufferedImage MyImage = ImageIO.read(ImagePath);
-
-        System.out.println("height: " + jPanel1.getHeight());
-        System.out.println("width: " + jPanel1.getWidth());
-
         ImageIcon image = new ImageIcon(MyImage.getScaledInstance(jPanel1.getWidth(), jPanel1.getHeight() - 50, Image.SCALE_SMOOTH));
-
-        System.out.println("height: " + image.getIconHeight());
-        System.out.println("width:" + image.getIconWidth());
         return image;
     }
 
@@ -193,7 +186,6 @@ public class Main extends javax.swing.JFrame {
                 if (img == null) {
                     System.out.println("it is null");
                 }
-                System.out.println("height: " + img.getHeight());
                 ImageIcon i = new ImageIcon(img);
                 jl.setIcon(ResizeImage(selectedFile));
                 jPanel1.add(jl);
